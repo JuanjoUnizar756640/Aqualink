@@ -1,8 +1,62 @@
-# Getting Started with the URL Shortener project
+# **Aqualink**
 
-2024-08-31
+## **Project Overview**
 
-## System requirements
+Aqualink is a shortening service. This application allows users to input a long URL and receive a shortened version along with a QR code for easy sharing. The project is built using Kotlin, Spring Boot, and includes front-end components for user interaction.
+
+### **QR Code Generation**
+
+#### PoC Description 
+
+Upon successful URL shortening, a QR code is generated based on the shortened URL. This QR code is displayed on the front-end, allowing users to easily share or scan the link.
+
+#### Justification for the Choice of Libraries
+
+For the QR code generation feature, we selected the ZXing (Zebra Crossing) library. ZXing is a well-established, open-source library that provides robust support for QR code generation and decoding. It is known for its efficiency and reliability, making it an excellent choice for our URL shortening service.
+
+**Comparison with QRGen**
+
+We initially considered using QRGen, another popular library for generating QR codes in Java/Kotlin. QRGen is user-friendly and offers a straightforward API, which simplifies the QR code creation process. However, after evaluating both libraries, we found the following advantages of ZXing:
+
+- **Performance and Flexibility:** ZXing provides greater flexibility in customizing QR code parameters, such as error correction levels, sizes, and formats. This allows us to optimize QR code generation based on user requirements.
+
+- **Community Support:** ZXing has a larger community and more extensive documentation available. This support can be crucial when encountering issues or seeking enhancements in functionality.
+
+- **Compatibility:** ZXing is compatible with a wide range of platforms and languages, ensuring that our application remains scalable and maintainable in the long run.
+
+Finally, while QRGen offered ease of use, the robustness and flexibility of ZXing made it the preferred choice for our application, aligning well with our goals for performance and user experience.
+
+#### Challenges encountered during implementation and how they were addressed.
+
+During the development of the Aqualink URL shortening service, we faced several challenges that required careful consideration and problem-solving.
+
+One significant issue we encountered was the difficulty in linking the generated QR code to the shortened URL. This problem stemmed from not adhering to the principles of Kotlin's Clean Architecture. Initially, our approach lacked a clear structure, which led to confusion in the implementation process. To address this, we took the time to thoroughly study and understand the concepts outlined in The Clean Architecture by Robert C. Martin. This deep dive into clean architecture principles helped us refactor our code and establish a more organized structure, allowing us to correctly link the QR codes to the shortened URLs.
+
+Another challenge we faced was properly sizing the QR code image for optimal display on the front-end. We initially struggled with the visual aspect, which affected user experience. However, by consulting the official ZXing documentation, we were able to identify the necessary adjustments to ensure the QR code displayed correctly and met our design expectations.
+
+Through these challenges, we learned the importance of adhering to architectural principles and leveraging available documentation to solve technical issues effectively.
+
+#### Clear Instructions on How to Run the PoC
+
+- **Clone the Repository:** Start by cloning the Aqualink repository from GitHub to your local machine.
+
+- **Navigate to the Project Directory:** Open your terminal and navigate to the project directory.
+
+- **Execute the Application:** Run the application using the command: ./gradlew bootRun
+
+- **Access the Application**: Open your web browser and navigate to the URL where the Aqualink application is hosted (e.g., `http://localhost:8080`).
+
+- **Input the URL**: In the provided text box on the front-end interface, enter the long URL that you wish to shorten.
+
+- **Shorten the URL**: Click the "Short me!" button. This action will send the URL to the back-end service for processing.
+
+- **View the Result**: Upon successful processing, the application will display the shortened URL along with a QR code. You can click on the shortened URL to access the original link easily or scan the QR code with a mobile device for quick sharing.
+
+#### A brief explanation of how the tests demonstrate the functionality of each feature.
+
+
+
+## System requirements and Setup
 
 This application leverages cutting-edge technologies to deliver a robust
 and versatile user experience:
