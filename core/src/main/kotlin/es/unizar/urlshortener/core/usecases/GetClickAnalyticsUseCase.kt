@@ -3,6 +3,10 @@
 package es.unizar.urlshortener.core.usecases
 
 import es.unizar.urlshortener.core.*
+import java.time.OffsetDateTime
+import es.unizar.urlshortener.core.usecases.GetClickAnalyticsUseCaseImpl.ClickAnalytics
+import es.unizar.urlshortener.core.usecases.GetClickAnalyticsUseCaseImpl.ClickFilters
+import es.unizar.urlshortener.core.usecases.GetClickAnalyticsUseCaseImpl.TimeFrame
 
 /**
  * Provides consolidated click data over a specified time frame.
@@ -20,12 +24,17 @@ interface GetClickAnalyticsUseCase {
     fun getClicks(timeFrame: TimeFrame, filters: ClickFilters): List<ClickAnalytics>
 }
 
+data class TimeFrame(
+    val start: OffsetDateTime,
+    val end: OffsetDateTime
+)
+
 /**
  * Implementation of [GetClickAnalyticsUseCase].
  */
 class GetClickAnalyticsUseCaseImpl(
     private val clickRepository: ClickRepositoryService
-) : GetClickAnalyticsUseCase {
+    ) : GetClickAnalyticsUseCase {
     /**
      * Retrieves click data within a specified time frame, applying the given filters.
      *
@@ -38,14 +47,24 @@ class GetClickAnalyticsUseCaseImpl(
         val clicks = clickRepository.findClicksByTimeFrame(timeFrame)
 
         // Apply filters to the result set
-        return clicks.filter {
+        val filteredClicks = clicks.filter {
             (filters.browser == null || it.browser == filters.browser) &&
                     (filters.referrer == null || it.referrer == filters.referrer) &&
                     (filters.country == null || it.country == filters.country) &&
                     (filters.platform == null || it.platform == filters.platform)
         }
+
+        // Convert Click to ClickAnalytics
+        return filteredClicks.map { click ->
+            ClickAnalytics(
+                timestamp = click.created.toEpochSecond(),
+                browser = click.browser,
+                referrer = click.referrer,
+                country = click.country,
+                platform = click.platform
+            )
+        }
     }
-}
 
 /**
  * Represents a time frame for retrieving click data.

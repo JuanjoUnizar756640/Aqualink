@@ -1,5 +1,7 @@
 package es.unizar.urlshortener.core
 
+import es.unizar.urlshortener.core.usecases.GetClickAnalyticsUseCaseImpl
+
 /**
  * [ClickRepositoryService] is the port to the repository that provides persistence to [Clicks][Click].
  */
@@ -11,6 +13,7 @@ interface ClickRepositoryService {
      * @return The saved [Click] entity.
      */
     fun save(cl: Click): Click
+    fun findClicksByTimeFrame(frame: GetClickAnalyticsUseCaseImpl.TimeFrame): List<Click>
 }
 
 /**
