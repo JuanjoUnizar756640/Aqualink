@@ -1,10 +1,10 @@
-# Aqualink
+# **Aqualink**
 
-## Project Overview
+## **Project Overview**
 
 Aqualink is a shortening service. This application allows users to input a long URL and receive a shortened version along with a QR code for easy sharing. The project is built using Kotlin, Spring Boot, and includes front-end components for user interaction.
 
-### QR Code Generation
+### **QR Code Generation**
 
 #### PoC Description 
 
