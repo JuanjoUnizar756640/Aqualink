@@ -20,7 +20,9 @@ import java.net.URI
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-
+// import org.mockito.Mockito.mock
+// import org.mockito.Mockito.verify
+// import org.mockito.Mockito.when
 /**
  * Integration tests for HTTP requests.
  */
@@ -65,7 +67,8 @@ class HttpRequestTest {
     fun `main page works`() {
         val response = restTemplate.getForEntity("http://localhost:$port/", String::class.java)
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(response.body).contains("A front-end example page for the project")
+        // assertThat(response.body).contains("A front-end example page for the project")
+        assertThat(response.body).contains("URL Shortener")
     }
 
     /**

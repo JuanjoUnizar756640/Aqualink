@@ -39,6 +39,16 @@ class RedirectionNotFound(key: String) : DomainException("[$key] is not known")
  */
 class InternalError(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 
+/**
+ * An exception indicating an error occurred during QR code generation.
+ * This exception is thrown when the QR code cannot be generated due to various reasons.
+ *
+ * @param message The detail message for the exception.
+ * @param cause The cause of the exception, which can be null.
+ */
+// class QRCodeGenerationException(message: String, cause: Throwable? = null) : DomainException(message, cause)
+
+
 inline fun <T> safeCall(
     onFailure: (Throwable) -> Throwable = { e -> InternalError("Unexpected error", e) },
     block: () -> T
