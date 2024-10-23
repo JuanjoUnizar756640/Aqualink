@@ -77,6 +77,19 @@ class UrlShortenerControllerImpl(
         }
     }
 
+    fun simplifyBrowserName(userAgent: String): String {
+        return when {
+            userAgent.contains("Chrome", ignoreCase = true) -> "Chrome"
+            userAgent.contains("Firefox", ignoreCase = true) -> "Firefox"
+            userAgent.contains("Safari", ignoreCase = true) && !userAgent.contains("Chrome", ignoreCase = true) -> "Safari"
+            userAgent.contains("Edge", ignoreCase = true) -> "Edge"
+            userAgent.contains("Opera", ignoreCase = true) || userAgent.contains("OPR", ignoreCase = true) -> "Opera"
+            userAgent.contains("Trident", ignoreCase = true) -> "Internet Explorer"
+            else -> "Unknown"
+        }
+    }
+
+
     fun getCountryFromIp(ip: String): String? {
         //Uses https://ip-api.com/ as an external service to get the location
         // if you are on private ip, try out 24.48.0.1 in request to check functionality
@@ -122,7 +135,7 @@ class UrlShortenerControllerImpl(
             logClickUseCase.logClick(id, ClickProperties(
                 ip = request.remoteAddr,
                 referrer = request.getHeader("Referer"),
-                browser = request.getHeader("User-Agent"),
+                browser = simplifyBrowserName(request.getHeader("User-Agent")),
                 platform = determinePlatform(request.getHeader("User-Agent")),
                 country = getCountryFromIp(request.remoteAddr) // Aquí obtienes el país
             ))
