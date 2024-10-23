@@ -34,5 +34,8 @@ interface ClickEntityRepository : JpaRepository<ClickEntity, Long> {
      * @return A list of [ClickEntity] matching the time frame.
      */
     @Query("SELECT c FROM ClickEntity c WHERE c.created BETWEEN :start AND :end")
-    fun findClicksByTimeFrame(@Param("start") start: OffsetDateTime, @Param("end") end: OffsetDateTime): List<ClickEntity>
+    fun findClicksByTimeFrame(
+        @Param("start") start: OffsetDateTime,
+        @Param("end") end: OffsetDateTime
+    ): List<ClickEntity>
 }

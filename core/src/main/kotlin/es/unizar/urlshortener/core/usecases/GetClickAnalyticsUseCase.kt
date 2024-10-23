@@ -48,49 +48,51 @@ class GetClickAnalyticsUseCaseImpl(
 
         // Apply filters to the result set
         val filteredClicks = clicks.filter {
-            (filters.browser == null || it.browser == filters.browser) &&
-                    (filters.referrer == null || it.referrer == filters.referrer) &&
-                    (filters.country == null || it.country == filters.country) &&
-                    (filters.platform == null || it.platform == filters.platform)
+            (filters.browser == null || it.properties.browser == filters.browser) &&
+                    (filters.referrer == null || it.properties.referrer == filters.referrer) &&
+                    (filters.country == null || it.properties.country == filters.country) &&
+                    (filters.platform == null || it.properties.platform == filters.platform)
         }
 
         // Convert Click to ClickAnalytics
         return filteredClicks.map { click ->
             ClickAnalytics(
                 timestamp = click.created.toEpochSecond(),
-                browser = click.browser,
-                referrer = click.referrer,
-                country = click.country,
-                platform = click.platform
+                browser = click.properties.browser.toString(),
+                referrer = click.properties.referrer.toString(),
+                country = click.properties.country.toString(),
+                platform = click.properties.platform.toString()
             )
         }
     }
 
-/**
- * Represents a time frame for retrieving click data.
- */
-data class TimeFrame(
-    val start: Long,
-    val end: Long
-)
 
-/**
- * Represents filters for click analytics.
- */
-data class ClickFilters(
-    val browser: String? = null,
-    val referrer: String? = null,
-    val country: String? = null,
-    val platform: String? = null
-)
+    /**
+     * Represents a time frame for retrieving click data.
+     */
+    data class TimeFrame(
+        val start: Long,
+        val end: Long
+    )
 
-/**
- * Represents click analytics data.
- */
-data class ClickAnalytics(
-    val timestamp: Long,
-    val browser: String,
-    val referrer: String,
-    val country: String,
-    val platform: String
-)
+    /**
+     * Represents filters for click analytics.
+     */
+    data class ClickFilters(
+        val browser: String? = null,
+        val referrer: String? = null,
+        val country: String? = null,
+        val platform: String? = null
+    )
+
+    /**
+     * Represents click analytics data.
+     */
+    data class ClickAnalytics(
+        val timestamp: Long,
+        val browser: String,
+        val referrer: String,
+        val country: String,
+        val platform: String
+    )
+}
