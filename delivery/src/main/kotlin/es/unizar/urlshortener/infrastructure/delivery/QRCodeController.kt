@@ -5,7 +5,10 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 /**
  * Controller responsible for handling QR code generation requests.
@@ -24,7 +27,7 @@ class QRCodeController(
     @GetMapping("/{shortUrl}")
     fun getQRCode(@PathVariable shortUrl: String): ResponseEntity<ByteArray> {
         // Call the use case to generate the QR code
-        val qrCode = generateQRCodeUseCase.generateQRCode("http://short.url/$shortUrl")
+        val qrCode = generateQRCodeUseCase.generateQRCode("http://localhost:8080/$shortUrl")
 
         // Return the QR code image as a PNG
         val headers = HttpHeaders()

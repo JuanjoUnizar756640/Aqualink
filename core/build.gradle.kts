@@ -4,6 +4,10 @@ plugins {
 }
 
 dependencies {
+    // Add ZXing dependencies for QR code generation
+    implementation("com.google.zxing:core:3.4.1") 
+    implementation("com.google.zxing:javase:3.4.1") 
+
     // Add Kotlin test library for unit testing
     testImplementation(libs.kotlin.test)
 

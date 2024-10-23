@@ -14,6 +14,13 @@ import java.awt.image.BufferedImage
  */
 class GenerateQRCodeUseCase {
 
+    // Constants
+    private companion object {
+        private const val QR_CODE_SIZE = 250
+        private const val BLACK_COLOR = 0x000000
+        private const val WHITE_COLOR = 0xFFFFFF
+    }
+
     /**
      * Generates a QR code from the given URL.
      * @param url The URL to encode in the QR code.
@@ -21,15 +28,16 @@ class GenerateQRCodeUseCase {
      */
     fun generateQRCode(url: String): ByteArray {
         val qrCodeWriter = QRCodeWriter()
-        val hintMap = EnumMap<EncodeHintType, Any>(EncodeHintType::class.java)
-        hintMap[EncodeHintType.CHARACTER_SET] = StandardCharsets.UTF_8.name()
+        val hintMap = EnumMap<EncodeHintType, Any>(EncodeHintType::class.java).apply {
+            this[EncodeHintType.CHARACTER_SET] = StandardCharsets.UTF_8.name()
+        }
 
-        val bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, 250, 250, hintMap)
-        val image = BufferedImage(250, 250, BufferedImage.TYPE_INT_RGB)
+        val bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, QR_CODE_SIZE, QR_CODE_SIZE, hintMap)
+        val image = BufferedImage(QR_CODE_SIZE, QR_CODE_SIZE, BufferedImage.TYPE_INT_RGB)
 
-        for (x in 0 until 250) {
-            for (y in 0 until 250) {
-                image.setRGB(x, y, if (bitMatrix.get(x, y)) 0x000000 else 0xFFFFFF)
+        for (x in 0 until QR_CODE_SIZE) {
+            for (y in 0 until QR_CODE_SIZE) {
+                image.setRGB(x, y, if (bitMatrix.get(x, y)) BLACK_COLOR else WHITE_COLOR)
             }
         }
 

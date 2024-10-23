@@ -1,41 +1,104 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
     <title>URL Shortener</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <link href="webjars/bootstrap/3.4.0/css/bootstrap.min.css" rel="stylesheet"
-          type="text/css"/>
+    <link href="webjars/bootstrap/3.4.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <script src="webjars/jquery/3.6.1/jquery.min.js" type="text/javascript"></script>
-    <script src="webjars/bootstrap/3.4.0/js/bootstrap.min.js"
-            type="text/javascript"></script>
-    <script src="js/app.js" type="text/javascript">
-    </script>
+    <script src="webjars/bootstrap/3.4.0/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="js/app.js" type="text/javascript"></script>
+    <style>
+        body {
+            background: url('/images/waves.svg') no-repeat center center fixed; /* Ruta al SVG */
+            background-size: cover; /* Asegura que el SVG cubra todo el fondo */
+        }
+        #qrCodeContainer {
+            margin-top: 20px;
+        }
+        h1 {
+            color: #000000; /* Color negro para h1 */
+            margin-bottom: 5px; /* Reduce el espacio entre h1 y h2 */
+        }
+        h2 {
+            color: #4d4d4d; /* Gris oscuro para h2 */
+            margin-bottom: 5px; /* Reduce el espacio entre h2 y el eslogan */
+        }
+        .slogan {
+            color: #808080; /* Gris medio para el eslogan */
+            font-size: 1.2em; /* Aumenta ligeramente el tamaño de la fuente */
+        }
+        #result {
+            margin-top: 40px; /* Espaciado superior */
+            padding: 15px; /* Relleno */
+            border-radius: 5px; /* Bordes redondeados */
+            font-size: 1.2em; /* Igual al tamaño de fuente de h2 */
+            background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco semi-transparente */
+            color: #333; /* Color de texto oscuro */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+            display: none; /* Oculta inicialmente el resultado */
+        }
+    </style>
 </head>
 <body>
 <div class="container-full">
     <div class="row">
         <div class="col-lg-12 text-center">
-            <h1>URL Shortener</h1>
-            <p class="lead">A front-end example page for the project</p>
+            <h1>Aqualink</h1>
+            <h2>URL Shortener</h2>
+            <p class="slogan">Measure Success, Maximize Impact: Elevate Your Digital Communication!</p>
             <br>
-            <form action="" class="col-lg-12" id="shortener" role="form">
-                <div class="input-group input-group-lg col-sm-offset-4 col-sm-4">
-                    <input class="center-block form-control input-lg" name="url"
-                           placeholder="Enter a URL" title="Enter a URL" type="text">
-                    <span class="input-group-btn"><button
-                            class="btn btn-lg btn-primary" type="submit">Short me!</button></span>
+            <form action="/api/link" method="post" class="col-lg-12" id="shortener" role="form">
+                <div class="input-group input-group-lg col-sm-offset-4 col-sm-4 mb-4">
+                    <input class="center-block form-control input-lg" name="url" placeholder="Enter a URL" title="Enter a URL" type="text" required>
+                    <span class="input-group-btn"><button class="btn btn-lg btn-primary" type="submit">Short me!</button></span>
                 </div>
             </form>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <div class="col-sm-offset-4 col-sm-4 text-center">
-                <br/>
-                <div id="result"></div>
+            <br>
+            <div id="result"></div>
+            <div id="qrCodeContainer" style="display:none;">
+                <h2>Código QR:</h2>
+                <img id="qrCode" alt="Código QR"/>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('shortener').onsubmit = function(event) {
+        event.preventDefault(); // Previene el envío normal del formulario
+
+        const formData = new FormData(this);
+
+        // Envía la URL para acortarla
+        fetch('/api/link', {
+            method: 'POST',
+            body: new URLSearchParams(formData),
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(data => {
+            // Muestra la URL corta en la interfaz
+            const shortUrl = data.url; // Asegúrate de que esto coincide con tu estructura de datos
+            const resultContainer = document.getElementById('result');
+            document.getElementById('result').innerHTML = `<strong>Shortened URL:</strong> <a href="${shortUrl}" target="_blank">${shortUrl}</a>`;
+            resultContainer.style.display = 'block'; // Muestra el contenedor
+
+            // Genera la URL del QR con el endpoint correcto
+            const qrCodeImg = document.getElementById('qrCode');
+            const qrUrl = `http://localhost:8080/api/qrcode/${shortUrl.split('/').pop()}`; // Cambiado a tu endpoint
+            qrCodeImg.src = qrUrl; // Asigna la URL del QR
+            console.log("Generando QR para: ", qrUrl); // Verifica la URL en la consola
+            document.getElementById('qrCodeContainer').style.display = 'block'; // Muestra el contenedor del QR
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    };
+</script>
 </body>
 </html>
