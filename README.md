@@ -52,9 +52,19 @@ Through these challenges, we learned the importance of adhering to architectural
 
 - **View the Result**: Upon successful processing, the application will display the shortened URL along with a QR code. You can click on the shortened URL to access the original link easily or scan the QR code with a mobile device for quick sharing.
 
-#### A brief explanation of how the tests demonstrate the functionality of each feature.
+#### A Brief Explanation of How the Tests Demonstrate the Functionality of Each Feature
 
+1. **GenerateQRCodeUseCaseTest**:
+   - **Test for Valid QR Code Generation**: The test `generateQRCode returns a valid QR code for a valid URL` checks that when a valid URL (`http://example.com`) is passed to the `generateQRCode` method, a non-null and non-empty byte array is returned. This confirms that the functionality to generate a QR code is operational.
+   
+   - **Test for Invalid URL Handling**: The test `generateQRCode throws exception if url is invalid` validates that the system correctly throws a `QRCodeGenerationException` when an invalid URL (`invalid-url`) or an empty URL is provided. This ensures robust error handling and input validation in the QR code generation process.
+   
+   - **Test for Encoding Failures**: The test `generateQRCode throws an exception if encoding fails` asserts that when an empty string is provided as a URL, the expected exception is thrown with the correct message. This reinforces the necessity of input validation and the appropriate management of exceptional cases.
 
+1. **QRCodeControllerTest**:
+   - **Test for Successful QR Code Retrieval**: The test `getQRCode returns QR code image for valid short URL` confirms that the controller successfully retrieves a QR code when a valid short URL is provided. It checks that the response has an HTTP status of `OK`, and the body contains the expected byte array representing the QR code image. This verifies the integration of the controller with the service layer.
+   
+   - **Test for Error Handling During QR Code Generation**: The test `getQRCode returns INTERNAL_SERVER_ERROR when QR code generation fails` checks that the controller handles exceptions correctly by returning an `INTERNAL_SERVER_ERROR` status when the QR code generation fails. This test demonstrates the robustness of the controller's error handling mechanism and ensures that the system behaves predictably in the face of errors.
 
 ## System requirements and Setup
 

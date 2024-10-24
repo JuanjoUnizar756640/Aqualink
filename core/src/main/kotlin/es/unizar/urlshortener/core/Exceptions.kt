@@ -3,6 +3,12 @@ package es.unizar.urlshortener.core
 import java.lang.RuntimeException
 
 /**
+ * An exception indicating an error occurred during QR code generation.
+ * This exception is thrown when there is an issue creating a QR code.
+ */
+class QRCodeGenerationException(message: String, cause: Throwable? = null) : DomainException(message, cause)
+
+/**
  * A base class for domain-specific exceptions in the application.
  * This sealed class serves as a root for all exceptions related to the domain logic.
  * It extends [RuntimeException], allowing for an optional [cause].

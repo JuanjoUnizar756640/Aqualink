@@ -3,11 +3,12 @@ package es.unizar.urlshortener.core.usecases
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
+import es.unizar.urlshortener.core.services.QRCodeService.QRCodeGenerationException
+import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.imageio.ImageIO
-import java.io.ByteArrayOutputStream
-import java.awt.image.BufferedImage
 
 /**
  * This use case generates a QR code for the provided URL.
@@ -27,11 +28,17 @@ class GenerateQRCodeUseCase {
      * @return The QR code as a byte array.
      */
     fun generateQRCode(url: String): ByteArray {
-        val qrCodeWriter = QRCodeWriter()
-        val hintMap = EnumMap<EncodeHintType, Any>(EncodeHintType::class.java).apply {
-            this[EncodeHintType.CHARACTER_SET] = StandardCharsets.UTF_8.name()
-        }
+    // Validar la URL antes de intentar generar el código QR
+    if (!isValidUrl(url)) {
+        throw QRCodeGenerationException("Invalid URL provided: $url", IllegalArgumentException("Invalid URL")) 
+    }
 
+    val qrCodeWriter = QRCodeWriter()
+    val hintMap = EnumMap<EncodeHintType, Any>(EncodeHintType::class.java).apply {
+        this[EncodeHintType.CHARACTER_SET] = StandardCharsets.UTF_8.name()
+    }
+
+    return try {
         val bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, QR_CODE_SIZE, QR_CODE_SIZE, hintMap)
         val image = BufferedImage(QR_CODE_SIZE, QR_CODE_SIZE, BufferedImage.TYPE_INT_RGB)
 
@@ -43,6 +50,13 @@ class GenerateQRCodeUseCase {
 
         val outputStream = ByteArrayOutputStream()
         ImageIO.write(image, "png", outputStream)
-        return outputStream.toByteArray()
+        outputStream.toByteArray()
+    } catch (e: com.google.zxing.WriterException) {
+        throw QRCodeGenerationException("Error while generating QR code for URL: $url", e)
     }
+}
+}
+
+private fun isValidUrl(url: String): Boolean {
+    return url.isNotEmpty() && (url.startsWith("http://") || url.startsWith("https://"))
 }

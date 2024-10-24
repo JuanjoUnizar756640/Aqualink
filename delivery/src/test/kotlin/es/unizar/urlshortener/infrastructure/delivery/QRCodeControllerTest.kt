@@ -1,39 +1,47 @@
 package es.unizar.urlshortener.infrastructure.delivery
 
-import es.unizar.urlshortener.core.*
-import es.unizar.urlshortener.core.usecases.GenerateQRCodeUseCase
+import es.unizar.urlshortener.core.services.QRCodeService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
+import org.mockito.kotlin.whenever
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
 class QRCodeControllerTest {
 
-    private val generateQRCodeUseCase: GenerateQRCodeUseCase = mock(GenerateQRCodeUseCase::class.java)
-    private val qrCodeController = QRCodeController(generateQRCodeUseCase)
+    private val qrCodeService = mock<QRCodeService>() // Mock del servicio
+    private val qrCodeController = QRCodeController(qrCodeService)
 
     @Test
-    fun `should return 400 if shortUrl is blank`() {
-        val response = qrCodeController.getQRCode("")
+    fun `getQRCode returns QR code image for valid short URL`() {
+        // Arrange
+        val shortUrl = "validShortUrl"
+        val expectedQRCode = ByteArray(1) // Simulando un QR Code generado
+        whenever(qrCodeService.generateQRCodeForUrl("http://localhost:8080/$shortUrl"))
+            .thenReturn(expectedQRCode)
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+        // Act
+        val response: ResponseEntity<ByteArray> = qrCodeController.getQRCode(shortUrl)
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(expectedQRCode, response.body)
+        assertEquals("image/png", response.headers.contentType?.toString())
     }
 
     @Test
-    fun `should return 400 if shortUrl contains unsafe characters`() {
-        val unsafeUrl = "example.com/<>"
-        val response = qrCodeController.getQRCode(unsafeUrl)
+    fun `getQRCode returns INTERNAL_SERVER_ERROR when QR code generation fails`() {
+        // Arrange
+        val shortUrl = "invalidShortUrl"
+        whenever(qrCodeService.generateQRCodeForUrl("http://localhost:8080/$shortUrl"))
+        .thenThrow(QRCodeService.QRCodeGenerationException("QR code generation failed", RuntimeException()))
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
-    }
+        // Act
+        val response: ResponseEntity<ByteArray> = qrCodeController.getQRCode(shortUrl)
 
-    @Test
-    fun `should return 400 if shortUrl is too long`() {
-        val longUrl = "http://localhost:8080/${"a".repeat(2048)}" // Ejemplo de URL muy larga
-        val response = qrCodeController.getQRCode(longUrl)
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+        // Assert
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
     }
 }
